@@ -124,9 +124,11 @@ def load_assignments():
 
 # Loads all user tasks from Todoist
 def load_todoist_tasks():
-    tasks = todoist_api.state['items']
-    for task in tasks:
-        todoist_tasks.append(task)
+    global todoist_tasks
+    todoist_tasks = todoist_api.state['items']
+    #Add completed tasks to list of tasks
+    for project in todoist_api.state['projects']:
+        todoist_tasks += todoist_api.items_archive.for_project(project['id']).items()
 
 # Loads all user projects from Todoist
 def load_todoist_projects():

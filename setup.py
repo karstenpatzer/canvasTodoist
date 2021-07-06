@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='canvasTodoist',
-    version='0.0.2',
+    version='0.0.3',
     description='A command line application to transfer canvas assignments to todoist',
     url='https://github.com/lukew3/canvasTodoist',
     author='Luke Weiler',
