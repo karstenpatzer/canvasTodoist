@@ -2,7 +2,10 @@ import requests
 import json
 from todoist.api import TodoistAPI
 from requests.auth import HTTPDigestAuth
+import os
+from sys import platform
 
+config_filename = ""
 keys = []
 canvas_api_heading = 'https://canvas.instructure.com'
 header = {}
@@ -18,6 +21,7 @@ def main():
     print(" #     Canvas-Assignments-Transfer-For-Todoist     #")
     print("###################################################\n")
 
+    set_config_filename()
     initialize_api()
     select_courses(keys)
     print("Working...")
@@ -28,20 +32,38 @@ def main():
     transfer_assignments_to_todoist()
     print("Done!")
 
+# gets config filename/location, depending on the operating system. Creates file if it doesn't exist
+def set_config_filename():
+    global config_filename
+    if platform == "linux" or platform == "linux2":
+        config_filename = os.path.expanduser("~") + "/.config/canvasTodoist/config.txt"
+    # darwin is the name for mac os x
+    elif platform == "darwin":
+        config_filename = os.path.expanduser("~") + "/Library/Preferences/canvasTodoist/config.txt"
+    elif platform == "win32":
+        username = os.getlogin()
+        config_filename = "C:\\Users\\" + username + "\\AppData\\Roaming\\canvasTodoist\\config.txt"
+
+    if not os.path.exists(config_filename):
+        if not os.path.exists(config_filename[:-10]):
+            os.makedirs(config_filename[:-10])
+        f = open(config_filename, 'w')
+        f.close()
+
 # Makes sure that the user has their api keys set up and sets api variables
 def initialize_api():
-    with open("api_keys.txt") as api_file:
+    with open(config_filename) as api_file:
         keys = api_file.readlines()
-    if keys[0] == "Replace THIS line with the Todoist API token. Remove trailing spaces\n" or len(keys) == 0:
+    if len(keys) == 0:
         print("Your Canvas API key has not been configured. To add an API token, go to your Canvas settings and click on New Access Token under Approved Integrations. Copy the token and paste below when you are done.")
-        keys[0] = input(">") + "\n"
-        f = open("api_keys.txt", "w")
+        keys.append(input(">") + "\n")
+        f = open(config_filename, "w")
         f.writelines(keys)
         f.close()
-    if keys[1] == "Replace THIS line with the Canvas API token. Remove Trailing spaces\n":
+    if len(keys) <= 1:
         print("Your Todoist API key has not been configured. To add an API token, go to your Todoist settings and copy the API token listed under the Integrations Tab. Copy the token and paste below when you are done.")
-        keys[1] = input(">") + "\n"
-        f = open("api_keys.txt", "w")
+        keys.append(input(">") + "\n")
+        f = open(config_filename, "w")
         f.writelines(keys)
         f.close()
     #create todoist_api object globally
@@ -56,19 +78,19 @@ def initialize_api():
 def select_courses(keys):
     response = requests.get(canvas_api_heading + '/api/v1/courses',
             headers=header, params=param)
-    with open("api_keys.txt") as api_file:
+    with open(config_filename) as api_file:
         keys = api_file.readlines()
-    if keys[2].strip() != "Replace THIS line and lines AFTER with the course ID of the course you want assignments to trasfer. Remove trailing spaces": #or keys[2:]
+    if len(keys) >= 3:
         use_previous_input = input("You have previously selected courses. Would you like to use the courses selected last time? (y/n) ")
-        print("")
         if use_previous_input == "y" or use_previous_input == "Y":
             for course_id in keys[2:]:
                 course_ids.append(int(course_id.strip()))
             for course in response.json():
                 courses_id_name_dict[course.get('id', None)] = course.get('name', None)
             return
-    # If the user does not choose to use courses selected last time
+    # If the user does not choose to use courses selected last time, the following runs
     i = 1
+    print("")
     for course in response.json():
         courses_id_name_dict[course.get('id', None)] = course.get('name', None)
         if course.get('name') != None:
@@ -84,7 +106,7 @@ def select_courses(keys):
     write_list = keys[0:2]
     for item in course_ids:
         write_list.append(str(item) + '\n')
-    f = open("api_keys.txt", "w")
+    f = open(config_filename, "w")
     f.writelines(write_list)
     f.close()
 
