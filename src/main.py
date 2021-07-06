@@ -17,9 +17,9 @@ courses_id_name_dict = {}
 todoist_project_dict = {}
 
 def main():
-    print("  ###################################################")
-    print(" #     Canvas-Assignments-Transfer-For-Todoist     #")
-    print("###################################################\n")
+    print("  ###################################")
+    print(" #          canvasTodoist          #")
+    print("###################################\n")
 
     set_config_filename()
     initialize_api()
