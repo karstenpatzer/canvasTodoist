@@ -1,5 +1,5 @@
 # canvasTodoist
-Command line application to transfer canvas assignments to todoist
+Command line application to transfer Canvas assignments to Todoist.
 
 ### Notice
 This project is a fork of [https://github.com/scottquach/Canvas-Assignments-Transfer-For-Todoist](https://github.com/scottquach/Canvas-Assignments-Transfer-For-Todoist).
