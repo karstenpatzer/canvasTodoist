@@ -19,7 +19,7 @@ todoist_project_dict = {}
 def main():
     print("  ###################################")
     print(" #          canvasTodoist          #")
-    print("###################################\n")
+    print("###################################")
 
     set_config_filename()
     initialize_api()
@@ -55,13 +55,13 @@ def initialize_api():
     with open(config_filename) as api_file:
         keys = api_file.readlines()
     if len(keys) == 0:
-        print("Your Canvas API key has not been configured. To add an API token, go to your Canvas settings and click on New Access Token under Approved Integrations. Copy the token and paste below when you are done.")
+        print("\nYour Canvas API key has not been configured. To add an API token, go to your Canvas settings and click on New Access Token under Approved Integrations. Copy the token and paste below when you are done.")
         keys.append(input(">") + "\n")
         f = open(config_filename, "w")
         f.writelines(keys)
         f.close()
     if len(keys) <= 1:
-        print("Your Todoist API key has not been configured. To add an API token, go to your Todoist settings and copy the API token listed under the Integrations Tab. Copy the token and paste below when you are done.")
+        print("\nYour Todoist API key has not been configured. To add an API token, go to your Todoist settings and copy the API token listed under the Integrations Tab. Paste below when you are done.")
         keys.append(input(">") + "\n")
         f = open(config_filename, "w")
         f.writelines(keys)
@@ -81,7 +81,7 @@ def select_courses(keys):
     with open(config_filename) as api_file:
         keys = api_file.readlines()
     if len(keys) >= 3:
-        use_previous_input = input("You have previously selected courses. Would you like to use the courses selected last time? (y/n) ")
+        use_previous_input = input("\nYou have previously selected courses. Would you like to use the courses selected last time? (y/n) ")
         if use_previous_input == "y" or use_previous_input == "Y":
             for course_id in keys[2:]:
                 course_ids.append(int(course_id.strip()))
