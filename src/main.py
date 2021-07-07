@@ -30,7 +30,7 @@ def main():
     load_todoist_tasks()
     create_todoist_projects()
     transfer_assignments_to_todoist()
-    print("Done!")
+    print("\nDone!")
 
 # gets config filename/location, depending on the operating system. Creates file if it doesn't exist
 def set_config_filename():
@@ -153,6 +153,9 @@ def create_todoist_projects():
 # Transfers over assignments from canvas over to Todoist, the method Checks
 # to make sure the assignment has not already been trasnfered to prevent overlap
 def transfer_assignments_to_todoist():
+    added_count = 0
+    already_completed_count = 0
+    previously_synced_count = 0
     for assignment in assignments:
         course_name = courses_id_name_dict[assignment['course_id']]
         assignment_name = assignment['name']
@@ -164,16 +167,26 @@ def transfer_assignments_to_todoist():
             task['project_id'] == project_id:
                 print("Assignment already synced: " + assignment['name'])
                 is_synced = True
+                previously_synced_count += 1
 
         if not is_synced:
             if assignment['submission']['submitted_at'] == None:
                 print("Adding assignment " + assignment['name'])
                 add_new_task(assignment, project_id)
+                added_count += 1
             else:
                 print("assignment already submitted " + assignment['name'])
+                already_completed_count += 1
         else:
             print("assignment already synced")
+            #previously_synced_count += 1
     todoist_api.commit()
+    
+    print(f"\n{added_count} tasks added")
+    if already_completed_count > 0:
+        print(f"{already_completed_count} tasks already completed")
+    if previously_synced_count > 0:
+        print(f"{previously_synced_count} tasks previously synced")
 
 # Adds a new task from a Canvas assignment object to Todoist under the
 # project coreesponding to project_id
