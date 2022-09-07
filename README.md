@@ -1,5 +1,6 @@
 # canvasTodoist
 Command line application to transfer Canvas assignments to Todoist.
+NOT AFFILIATED WITH lukew3
 <center><img src="/demo.gif" width="600" height="350"/></center>
 
 
